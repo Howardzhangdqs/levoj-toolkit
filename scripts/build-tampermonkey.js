@@ -1,0 +1,33 @@
+import fs from "fs";
+import * as prettier from "prettier";
+
+const packageInfo = JSON.parse(fs.readFileSync("./package.json", "utf-8").toString());
+
+const TamperMonkeyHeader = `// ==UserScript==
+// @name                NUIST LevOJ 刷题助手
+// @namespace           http://howardzhangdqs.eu.org/
+// @source              https://github.com/Howardzhangdqs/levoj-toolkit
+// @version             ${packageInfo.version}
+// @description         LevOJ 是 NUIST 开发的一个在线 OJ，本插件可以帮助你更方便的刷题。
+// @author              HowardZhangdqs
+// @match               *://client.vpn.nuist.edu.cn/https/*/problem/*/*
+// @license             MIT
+// @icon                data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACEuUJ8g7hB/4O4Qf+DuEH/f6tA/2BNNf9eSTX/Xkk1/15JNf9eSTX/Xkk1/15JNf9kXDf/cIA7/3CAO/9xgjx8n79gCIS4Qd+DuEH/g7hB/4O4Qf9uejr/Xkk1/15JNf9eSTX/Xkk1/15JNf9eSzb/bnk6/3CAO/9wgDvfgJ9ACAAAAACGuUNUg7hB/4O4Qf+DuEH/gbZA/2JTNv9eSTX/Xkk1/15JNf9eSTX/ZmQ4/3CAO/9wgDv/cIM9VAAAAAAAAAAAAAAAAIS4Qb+DuEH/g7hB/4O4Qf90jT3/Xkk1/15JNf9eSTX/YE82/299O/9wgDv/cYE8wAAAAAAAAAAAAAAAAAAAAACIuEEvg7hC/YO4Qf+DuEH/g7hB/2VeN/9eSTX/Xkk1/2psOf9wgDv/cYA7/XKCPC8AAAAAAAAAAAAAAAAAAAAAAAAAAIW5QZiDuEH/g7hB/4O4Qf97oT//X0o1/2JWNv9wgDv/cIA7/3GAPJkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACMv00Ug7lB74O4Qf+DuEH/g7hB/2ttOf5tdDn/cIA7/3GBPPB5hj0VAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIS4QnCDuEH/g7hB/4O4Qf+DsUGhcIE76HCAO/9xgT1xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC/v4AEhLlB14O4Qf+DuELxi7lGFnGBO2NtcjqYmZlmBQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIO4Q0iDuEH/hbhDcwAAAACA/4ACdYVAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAg7lCjpnMZgUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//8AAP//AAD//wAAgAEAAIABAADAAwAAwAMAAOAHAADgBwAA8A8AAPgfAAD43wAA/f8AAP3/AAD//wAA//8AAA==
+// @grant               none
+// ==/UserScript==
+
+`;
+
+const TamperMonkeyScript = fs.readFileSync("./dist/bundle.js", "utf-8").toString();
+
+prettier.format(TamperMonkeyScript, {
+    semi: true,
+    parser: "babel",
+    tabWidth: 4,
+}).then((FormattedTamperMonkeyScript) => {
+
+    const TamperMonkeyScriptWithHeader = TamperMonkeyHeader + FormattedTamperMonkeyScript;
+
+    fs.writeFileSync("./dist/tampermonkey-script.js", TamperMonkeyScriptWithHeader, "utf-8");
+
+});
